@@ -5,12 +5,63 @@
         <div class="card-content white-text">
           <span class="card-title">User card</span>
           <div class="content-data">
-            <span>First name: {{ user.name.first }}</span>
-            <span>Second name: {{ user.name.last }}</span>
-            <span>Age: {{ user.dob.age }}</span>
-            <span>Gender: {{ user.gender }}</span>
-            <span>Email: {{ user.email }}</span>
+            <table>
+              <thead>
+                <tr>
+                  <th>First name:</th>
+                  <th>Second name:</th>
+                  <th>Age:</th>
+                  <th>Location:</th>
+                  <th>Email:</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <input
+                      class="input-default"
+                      type="text"
+                      v-model="user_name"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      class="input-default"
+                      type="text"
+                      v-model="user_name_last"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      class="input-default"
+                      type="number"
+                      v-model="user_age"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      class="input-default"
+                      type="text"
+                      v-model="user_country"
+                    />
+                  </td>
+                  <td>
+                    <input
+                      class="input-default-email"
+                      type="text"
+                      v-model="user_email"
+                    />
+                  </td>
+                </tr>
+              </tbody>
+            </table>
           </div>
+          <button
+            @click="updateUserData"
+            class="waves-effect waves-light btn btn-save"
+          >
+            Save
+          </button>
         </div>
       </div>
 
@@ -47,6 +98,43 @@ export default {
     ToDoInput,
     ToDoCard,
   },
+  data() {
+    return {
+      user_name: this.user.name.first,
+      user_name_last: this.user.name.last,
+      user_age: this.user.dob.age,
+      user_country: this.user.location.country,
+      user_email: this.user.email,
+    };
+  },
+  watch: {
+    user: {
+      immediate: true,
+      handler(newUser) {
+        this.user_name = newUser.name.first;
+        this.user_email = newUser.email;
+      },
+    },
+  },
+  methods: {
+    updateUserData() {
+      const updatedUser = {
+        ...this.user,
+        name: {
+          first: this.user_name,
+          last: this.user_name_last,
+        },
+        dob: {
+          age: this.user_age,
+        },
+        location: {
+          country: this.user_country,
+        },
+        email: this.user_email,
+      };
+      this.$emit('save', updatedUser);
+    },
+  },
   setup() {
     const taskList = ref([{ id: 1, textTask: 'Default Task', status: false }]);
     const addTask = ({ textTask }) => {
@@ -70,6 +158,7 @@ export default {
     const deleteTask = (id) => {
       taskList.value = taskList.value.filter((el) => el.id !== id);
     };
+
     return {
       taskList,
       addTask,
@@ -89,3 +178,17 @@ export default {
   },
 };
 </script>
+
+<style>
+.input-default {
+  width: 90px !important;
+}
+
+.input-default-email {
+  width: 200px !important;
+}
+
+.btn-save {
+  width: 100%;
+}
+</style>

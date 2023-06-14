@@ -14,6 +14,7 @@
         <ModalWindow 
         :isOpenModal="isOpenModal" 
         @close="isOpenModal = false"
+        @save="saveUser"
         :user="user"
         v-if="user && user.login.md5 === personId"
         />
@@ -34,6 +35,12 @@ export default {
   methods: {
     userId(data) {
       this.personId = data;
+    },
+    saveUser(updatedUser) {
+      const index = this.users.findIndex((user) => user.id === updatedUser.id);
+      if (index !== -1) {
+        this.users[index] = { ...updatedUser };
+      }
     },
   },
   data() {
